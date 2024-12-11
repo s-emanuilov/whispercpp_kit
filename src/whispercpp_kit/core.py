@@ -112,7 +112,7 @@ class WhisperCPP:
         )
 
     def _check_requirements(self) -> None:
-        required_commands = ["git", "cmake", "ffmpeg"]
+        required_commands = ["git"]  # Add more later on, if needed
         missing = [cmd for cmd in required_commands if not shutil.which(cmd)]
         if missing:
             raise WhisperCPPError(f"Missing required commands: {', '.join(missing)}")
