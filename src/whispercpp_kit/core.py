@@ -113,15 +113,15 @@ class WhisperCPP:
 
     def _check_requirements(self) -> None:
         """Check if all required system commands are available"""
-        required_commands = ["git", "cmake", "ffmpeg"]
+        required_commands = ["git", "cmake", "ffmpeg", "make", "g++", "gcc"]
         missing = [cmd for cmd in required_commands if not shutil.which(cmd)]
         if missing:
             missing_str = " ".join(missing)
             raise WhisperCPPError(
                 f"Missing required commands: {', '.join(missing)}. "
                 "Please install them using your system's package manager:\n"
-                f"- For Ubuntu/Debian: sudo apt-get install {missing_str}\n"
-                f"- For CentOS/RHEL: sudo yum install {missing_str}\n"
+                f"- For Ubuntu/Debian: sudo apt-get install {missing_str} build-essential\n"
+                f"- For CentOS/RHEL: sudo yum install {missing_str} gcc-c++ make\n"
                 f"- For macOS: brew install {missing_str}"
             )
 
