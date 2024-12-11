@@ -234,7 +234,7 @@ class WhisperCPP:
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            return result.stdout.strip()
+            return result.stdout.strip().split(']')[1].strip()
         except subprocess.CalledProcessError as e:
             raise WhisperCPPError(f"Transcription failed: {e.stderr}")
 

@@ -47,7 +47,7 @@ print(output)
 
 ## Docker example
 
-See [examples/docker/README.md](examples/docker/README.md) for more details. But in short, you can run the following command to transcribe an audio file:
+See [examples/docker/README.md](examples/docker/README.md) for more details. You can run the container in two ways:
 
 ```bash
 git clone https://github.com/s-emanuilov/whispercpp_kit
@@ -55,9 +55,9 @@ cd whispercpp_kit/examples/docker
 
 docker build -t whispercpp_kit .
 
-# Using default model (base.en)
-docker run -v $(pwd):/app whispercpp-kit your_audio.mp3
+# Run with default model (base.en)
+docker run -v $(pwd):/app/audio whispercpp_kit your_audio.mp3
 
-# Using specific model
-docker run -v $(pwd):/app whispercpp-kit your_audio.mp3 tiny.en
+# Using specific model (works with both mounting options)
+docker run -v $(pwd):/app/audio whispercpp_kit your_audio.mp3 tiny.en
 ```
