@@ -112,10 +112,18 @@ class WhisperCPP:
         )
 
     def _check_requirements(self) -> None:
-        required_commands = ["git"]  # Add more later on, if needed
+        """Check if all required system commands are available"""
+        required_commands = ["git", "cmake", "ffmpeg"]
         missing = [cmd for cmd in required_commands if not shutil.which(cmd)]
         if missing:
-            raise WhisperCPPError(f"Missing required commands: {', '.join(missing)}")
+            missing_str = " ".join(missing)
+            raise WhisperCPPError(
+                f"Missing required commands: {', '.join(missing)}. "
+                "Please install them using your system's package manager:\n"
+                f"- For Ubuntu/Debian: sudo apt-get install {missing_str}\n"
+                f"- For CentOS/RHEL: sudo yum install {missing_str}\n"
+                f"- For macOS: brew install {missing_str}"
+            )
 
     def setup(self) -> None:
         """Setup whisper.cpp library and model only if needed"""
@@ -250,4 +258,3 @@ class WhisperCPP:
             return str(cache_path)
         except ffmpeg.Error as e:
             raise WhisperCPPError(f"Audio conversion failed: {e.stderr.decode()}")
-
