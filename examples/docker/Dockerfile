@@ -1,12 +1,15 @@
 FROM python:3.12-slim
 
-# Install only the required system dependencies
+# Install all required system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     cmake \
     make \
     g++ \
     ffmpeg \
+    build-essential \
+    pkg-config \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install the package
