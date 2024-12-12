@@ -28,6 +28,7 @@ class WhisperCPP:
     SAMPLE_RATE = 16000
     DEFAULT_CACHE_DIR = Path(tempfile.gettempdir()) / "whisper-cpp-cache"
     DEFAULT_LIB_DIR = Path.home() / ".whisper.cpp"
+    DEFAULT_THREADS = os.cpu_count() or 1
 
     def __init__(
         self,
@@ -37,6 +38,8 @@ class WhisperCPP:
         cache_dir: Optional[Union[str, Path]] = None,
         log_level: int = logging.INFO,
         skip_checks: bool = False,
+        num_threads: Optional[int] = None,
+        verbose: bool = False,
     ):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(log_level)
@@ -58,6 +61,13 @@ class WhisperCPP:
         self.system = platform.system().lower()
         self._setup_platform_configs()
 
+        self.num_threads = num_threads if num_threads is not None else self.DEFAULT_THREADS
+        
+        if self.num_threads < 1:
+            raise WhisperCPPError("Number of threads must be at least 1")
+
+        self.verbose = verbose
+        
         if not skip_checks:
             self._check_requirements()
             self.setup()
@@ -225,16 +235,27 @@ class WhisperCPP:
             str(self.model_path),
             "-f",
             str(audio_path),
+            "-nt",
+            "-t",
+            str(self.num_threads),
         ]
-
+        
+        if self.verbose:
+            cmd.append("-debug")
+            
         if language:
             cmd.extend(["-l", language])
         if translate:
             cmd.append("--translate")
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            return result.stdout.strip().split(']')[1].strip()
+            result = subprocess.run(
+                cmd, 
+                capture_output=not self.verbose,
+                text=True, 
+                check=True
+            )
+            return result.stdout.strip() if not self.verbose else "Output printed to console"
         except subprocess.CalledProcessError as e:
             raise WhisperCPPError(f"Transcription failed: {e.stderr}")
 
