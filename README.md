@@ -1,63 +1,133 @@
-# WhisperCPP Kit
+# WhisperCPP Kit 🎙️
 
-A wrapper arround [whisper.cpp](https://github.com/ggerganov/whisper.cpp) with additional helper features like model management capabilities.
+[![PyPI version](https://badge.fury.io/py/whispercpp-kit.svg)](https://badge.fury.io/py/whispercpp-kit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-While `whispercpp_kit` will automatically build and set up whisper.cpp for you, it requires certain system-level dependencies (git, cmake, ffmpeg) to be pre-installed on your system. 
-If any dependency is missing, the library will provide a clear error message indicating what needs to be installed.
+> 🚀 A Python wrapper around [whisper.cpp](https://github.com/ggerganov/whisper.cpp) with model management and helper features.
 
+## ✨ Features
 
-## System requirements
+- 🔄 Automatic building and setup of whisper.cpp
+- 🎯 Simple, intuitive Python API
+- 🔧 Built-in model management
+- 🚦 Clear error messages and dependency checks
+- 🎵 Automatic audio format conversion
+- 🧵 Multi-threading support
+- 🐳 Docker support
+- 🎯 Support for custom and fine-tuned models
+- ⚡ Cached builds for faster subsequent inference
 
-Before installing `whispercpp_kit`, ensure you have the following dependencies installed:
+## 📋 System Requirements
+
+Before installing `whispercpp_kit`, ensure you have these system-level dependencies:
+
+### Required dependencies 🛠️
 
 - `git`
 - `cmake`
 - `ffmpeg`
+- `make`
+- `g++`/`gcc` (C++ compiler)
+- Build essentials
 
-### Installing dependencies
+### Installation commands 📦
 
-Ubuntu/Debian:
+<details>
+<summary>Ubuntu/Debian</summary>
+
 ```bash
 sudo apt update
-sudo apt install git cmake ffmpeg
+sudo apt install git cmake ffmpeg build-essential
 ```
+</details>
 
-MacOS:
+<details>
+<summary>MacOS</summary>
+
 ```bash
-brew install git cmake ffmpeg
+brew install git cmake ffmpeg gcc make
 ```
+</details>
 
-## Installation
+<details>
+<summary>CentOS/RHEL</summary>
+
+```bash
+sudo yum update
+sudo yum groupinstall "Development Tools"
+sudo yum install git cmake ffmpeg gcc-c++ make
+```
+</details>
+
+> ⚠️ Windows is currently not supported. Please use WSL (Windows Subsystem for Linux) with Ubuntu.
+
+## 🚀 Quick start
+
+### Installation
 
 ```bash
 pip install whispercpp_kit
 ```
 
-## Quickstart
+### Basic usage
 
 ```python
 from whispercpp_kit import WhisperCPP
 
+# Initialize with default model
 whisper = WhisperCPP(model_name="tiny.en")
-# whisper = Whisper(model_path="/custom/pathggml-large-v3-turbo-q5_0.bin")
 
-output = whisper.transcribe("input.mp3")
-print(output)
+# Transcribe audio
+text = whisper.transcribe("audio.mp3")
+print(text)
 ```
 
-## Docker example
+### Advanced configuration
 
-See [examples/docker/README.md](examples/docker/README.md) for more details. You can run the container in two ways:
+```python
+# Using standard models
+whisper = WhisperCPP(
+    model_name="tiny.en",
+    num_threads=8,        # Control threads number
+    verbose=True,         # Enable verbose output
+    cache_dir="./cache"   # Custom cache directory
+)
+
+# Using custom or fine-tuned models
+whisper = WhisperCPP(model_path="/path/to/your/fine-tuned-model.bin")
+
+# The library caches the built whisper.cpp source code
+# This means subsequent runs will be faster as compilation is skipped
+```
+
+## 🐳 Docker support
+
+<details>
+<summary>Docker Instructions</summary>
 
 ```bash
 git clone https://github.com/s-emanuilov/whispercpp_kit
 cd whispercpp_kit/examples/docker
 
+# Build the image
 docker build -t whispercpp_kit .
 
 # Run with default model (base.en)
 docker run -v $(pwd):/app/audio whispercpp_kit your_audio.mp3
 
-# Using specific model (works with both mounting options)
+# Using specific model
 docker run -v $(pwd):/app/audio whispercpp_kit your_audio.mp3 tiny.en
 ```
+
+See [examples/docker/README.md](examples/docker/README.md) for more details.
+</details>
+
+## 📝 License
+
+MIT License - feel free to use in your projects!
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to submit issues and pull requests.
+
+##
