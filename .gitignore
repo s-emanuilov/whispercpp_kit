@@ -34,3 +34,9 @@ ENV/
 # Whisper specific
 models/
 *.wav
+
+# Docker
+.dockerignore
+
+# Test files
+test.py
