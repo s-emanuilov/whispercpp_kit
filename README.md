@@ -77,6 +77,9 @@ from whispercpp_kit import WhisperCPP
 # Initialize with default model
 whisper = WhisperCPP(model_name="tiny.en")
 
+# First-time setup (automatically done on first transcribe)
+whisper.setup()
+
 # Transcribe audio
 text = whisper.transcribe("audio.mp3")
 print(text)
@@ -99,6 +102,30 @@ whisper = WhisperCPP(model_path="/path/to/your/fine-tuned-model.bin")
 # The library caches the built whisper.cpp source code
 # This means subsequent runs will be faster as compilation is skipped
 ```
+
+## 🐳 Troubleshooting
+
+### Rebuilding whisper.cpp
+
+If you encounter issues with the whisper.cpp binary, you can force a rebuild:
+
+```python
+import shutil
+from whispercpp_kit import WhisperCPP
+
+whisper = WhisperCPP(model_name="tiny.en")
+# Force rebuild of whisper.cpp
+shutil.rmtree(whisper.base_path)
+whisper.setup()
+```
+
+### Common Issues
+
+1. **Binary Deprecation Warning**: If you see a warning about the 'main' binary being deprecated, rebuild whisper.cpp using the steps above. The latest version uses 'whisper-cli' instead.
+
+2. **Transcription Failures**: Ensure you have all required dependencies installed and sufficient permissions to execute the binary.
+
+3. **Audio Format Issues**: The library automatically converts audio files using ffmpeg. Make sure ffmpeg is properly installed if you encounter audio-related errors.
 
 ## 🐳 Docker support
 

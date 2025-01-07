@@ -75,11 +75,11 @@ class WhisperCPP:
     def _setup_platform_configs(self) -> None:
         self.platform_configs = {
             "linux": {
-                "binary_name": "main",
+                "binary_name": "whisper-cli",
                 "cmake_args": ["-DCMAKE_BUILD_TYPE=Release"],
             },
             "darwin": {
-                "binary_name": "main",
+                "binary_name": "whisper-cli",
                 "cmake_args": ["-DCMAKE_BUILD_TYPE=Release"],
             },
         }
@@ -229,26 +229,34 @@ class WhisperCPP:
         if convert:
             audio_path = self.convert_audio(audio_path)
 
-        cmd = [
-            str(self.base_path / "build" / "bin" / self.platform_config["binary_name"]),
-            "-m",
-            str(self.model_path),
-            "-f",
-            str(audio_path),
-            "-nt",
-            "-t",
-            str(self.num_threads),
-        ]
-        
-        if self.verbose:
-            cmd.append("-debug")
-            
-        if language:
-            cmd.extend(["-l", language])
-        if translate:
-            cmd.append("--translate")
-
         try:
+            binary_path = self.base_path / "build" / "bin" / self.platform_config["binary_name"]
+            if not binary_path.exists():
+                # Fallback to old 'main' binary if whisper-cli is not found
+                binary_path = self.base_path / "build" / "bin" / "main"
+                if not binary_path.exists():
+                    raise WhisperCPPError("Neither whisper-cli nor main binary found")
+                self.logger.warning("Using deprecated 'main' binary. Please rebuild whisper.cpp to use whisper-cli")
+
+            cmd = [
+                str(binary_path),
+                "-m",
+                str(self.model_path),
+                "-f",
+                str(audio_path),
+                "-nt",
+                "-t",
+                str(self.num_threads),
+            ]
+            
+            if self.verbose:
+                cmd.append("-debug")
+                
+            if language:
+                cmd.extend(["-l", language])
+            if translate:
+                cmd.append("--translate")
+
             result = subprocess.run(
                 cmd, 
                 capture_output=not self.verbose,
@@ -257,7 +265,8 @@ class WhisperCPP:
             )
             return result.stdout.strip() if not self.verbose else "Output printed to console"
         except subprocess.CalledProcessError as e:
-            raise WhisperCPPError(f"Transcription failed: {e.stderr}")
+            error_msg = e.stderr if e.stderr else str(e)
+            raise WhisperCPPError(f"Transcription failed: {error_msg}")
 
     def convert_audio(self, audio_path: Union[str, Path]) -> str:
         """Convert audio with caching"""
