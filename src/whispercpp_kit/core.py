@@ -167,6 +167,7 @@ class WhisperCPP:
                 [
                     "git",
                     "clone",
+                    "--recurse-submodules",
                     "https://github.com/ggerganov/whisper.cpp.git",
                     str(self.base_path),
                 ],
@@ -179,6 +180,13 @@ class WhisperCPP:
                     "checkout",
                     "v1.7.4",
                 ],
+                cwd=self.base_path,
+                check=True,
+                capture_output=True,
+            )
+            # Ensure submodules are up to date after checkout
+            subprocess.run(
+                ["git", "submodule", "update", "--init", "--recursive"],
                 cwd=self.base_path,
                 check=True,
                 capture_output=True,
