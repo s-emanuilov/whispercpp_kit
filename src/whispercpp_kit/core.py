@@ -178,7 +178,7 @@ class WhisperCPP:
                 [
                     "git",
                     "checkout",
-                    "v1.7.4",
+                    "v1.7.5",
                 ],
                 cwd=self.base_path,
                 check=True,
