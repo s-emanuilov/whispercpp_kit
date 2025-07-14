@@ -178,7 +178,7 @@ class WhisperCPP:
                 [
                     "git",
                     "checkout",
-                    "v1.7.5",
+                    "v1.7.6",
                 ],
                 cwd=self.base_path,
                 check=True,
@@ -239,6 +239,7 @@ class WhisperCPP:
         convert: bool = True,
         language: Optional[str] = None,
         translate: bool = False,
+        prompt: Optional[str] = None,
     ) -> str:
         """Transcribe audio file"""
         if not self.check_ready():
@@ -265,6 +266,8 @@ class WhisperCPP:
             cmd.extend(["-l", language])
         if translate:
             cmd.append("--translate")
+        if prompt:
+            cmd.extend(["--prompt", prompt])
 
         try:
             result = subprocess.run(
